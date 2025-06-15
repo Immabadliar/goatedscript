@@ -1,8 +1,0 @@
-{
-    "deno.enable": true,
-    "editor.cursorSmoothCaretAnimation": "on",
-    "editor.cursorStyle": "line",
-    "editor.fontFamily": "Cascadia Code",
-    "deno.cache": "C://Users//cocch//OneDrive//Desktop//deno cache",
-    "deno.path":"C://Program Files//deno//deno.exe"
-}
