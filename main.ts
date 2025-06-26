@@ -12,7 +12,6 @@ async function run(source: string) {
 
     const interpreter = new Interpreter();
     interpreter.interpret(statements);
-
   } catch (err) {
     console.error("Error:", err.message);
   }

@@ -1,13 +1,20 @@
 export type TokenType =
   // Keywords
-  | "VAR" | "FUN" | "RETURN" | "PRINT" | "IF" | "ELSE" | "WHILE" | "TRUE" | "FALSE" | "NIL"
+  | "VAR" | "FUN" | "RETURN" | "PRINT" | "IF" | "ELSE" | "WHILE" | "TRUE" | "FALSE" | "NIL" | "FOR"
+  | "CLASS" | "STRUCT" | "ENUM" | "INTERFACE"
+  | "PUBLIC" | "PRIVATE" | "PROTECTED" | "STATIC" | "FINAL" | "ABSTRACT" | "ASYNC" | "EXTENDS" | "SUPER" | "THIS"
+  | "BREAK" | "CONTINUE" | "AND" | "OR"
+
   // Identifiers and literals
   | "IDENTIFIER" | "STRING" | "NUMBER"
+
   // Single-character tokens
   | "LEFT_PAREN" | "RIGHT_PAREN" | "LEFT_BRACE" | "RIGHT_BRACE"
   | "COMMA" | "DOT" | "MINUS" | "PLUS" | "SEMICOLON" | "SLASH" | "STAR" | "EQUAL"
   | "BANG" | "BANG_EQUAL" | "EQUAL_EQUAL"
   | "GREATER" | "GREATER_EQUAL" | "LESS" | "LESS_EQUAL"
+  | "COLON"
+
   | "EOF";
 
 export interface Token {
@@ -28,6 +35,30 @@ const keywords: Record<string, TokenType> = {
   "true": "TRUE",
   "false": "FALSE",
   "nil": "NIL",
+  "for": "FOR",
+
+  "class": "CLASS",
+  "struct": "STRUCT",
+  "enum": "ENUM",
+  "interface": "INTERFACE",
+
+  "public": "PUBLIC",
+  "private": "PRIVATE",
+  "protected": "PROTECTED",
+  "static": "STATIC",
+  "final": "FINAL",
+  "abstract": "ABSTRACT",
+  "async": "ASYNC",
+
+  "extends": "EXTENDS",
+  "super": "SUPER",
+  "this": "THIS",
+
+  "break": "BREAK",
+  "continue": "CONTINUE",
+
+  "and": "AND",
+  "or": "OR",
 };
 
 export class Lexer {
@@ -64,6 +95,7 @@ export class Lexer {
       case "+": this.addToken("PLUS"); break;
       case ";": this.addToken("SEMICOLON"); break;
       case "*": this.addToken("STAR"); break;
+      case ":": this.addToken("COLON"); break;
       case "!":
         this.addToken(this.match("=") ? "BANG_EQUAL" : "BANG");
         break;
@@ -78,7 +110,6 @@ export class Lexer {
         break;
       case "/":
         if (this.match("/")) {
-          // Comment goes until end of line
           while (this.peek() !== "\n" && !this.isAtEnd()) this.advance();
         } else {
           this.addToken("SLASH");
@@ -87,7 +118,6 @@ export class Lexer {
       case " ":
       case "\r":
       case "\t":
-        // Ignore whitespace
         break;
       case "\n":
         this.line++;
@@ -120,7 +150,7 @@ export class Lexer {
     while (this.isDigit(this.peek())) this.advance();
 
     if (this.peek() === "." && this.isDigit(this.peekNext())) {
-      this.advance(); // consume "."
+      this.advance();
       while (this.isDigit(this.peek())) this.advance();
     }
 
@@ -136,7 +166,7 @@ export class Lexer {
 
     if (this.isAtEnd()) throw new Error(`Unterminated string at line ${this.line}`);
 
-    this.advance(); // closing "
+    this.advance();
 
     const value = this.source.substring(this.start + 1, this.current - 1);
     this.addToken("STRING", value);
